@@ -5,7 +5,7 @@
       "세터",
       "매니저"
     ],
-    "description": "세 지점의 세팅 일정을 한 달력에 넣고 PNG로 내보냅니다.",
+    "description": "세팅 일정을 입력하고 이미지로 내보냅니다.",
     "url": "https://igoodimin.github.io/waverock-Routesetting-calendar/",
     "thumbnail": "thumbs/setting-calendar.jpg"
   },
