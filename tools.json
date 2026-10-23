@@ -1,0 +1,26 @@
+[
+  {
+    "name": "세팅 달력",
+    "description": "세 지점의 세팅 일정을 한 달력에 넣고 PNG로 내보냅니다.",
+    "url": "https://igoodimin.github.io/waverock-Routesetting-calendar/",
+    "thumbnail": "thumbs/setting-calendar.jpg"
+  },
+  {
+    "name": "지점별 세팅 이미지",
+    "description": "세팅 달력 일정을 불러와 지점별 이미지를 만듭니다.",
+    "url": "https://igoodimin.github.io/waverock-sector-image/",
+    "thumbnail": "thumbs/sector-image.jpg"
+  },
+  {
+    "name": "배송 달력",
+    "description": "배송 마감·재개·휴무일을 표시한 달력 이미지를 만듭니다.",
+    "url": "https://igoodimin.github.io/waverock_shipping-calendar/",
+    "thumbnail": "thumbs/shipping-calendar.jpg"
+  },
+  {
+    "name": "강습 달력",
+    "description": "지점별 강습 일정을 넣고 PDF나 이미지로 저장합니다.",
+    "url": "https://igoodimin.github.io/waverock-class-calendar/",
+    "thumbnail": "thumbs/class-calendar.jpg"
+  }
+]
