@@ -35,6 +35,7 @@
     ],
     "description": "지점별 강습 일정을 넣고 PDF나 이미지로 저장합니다.",
     "url": "https://igoodimin.github.io/waverock-class-calendar/",
-    "thumbnail": "thumbs/class-calendar.jpg"
+    "thumbnail": "thumbs/class-calendar.jpg",
+    "archived": true
   }
 ]

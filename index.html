@@ -35,6 +35,9 @@
   .open{margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:var(--wr-radius);background:var(--wr-accent);color:var(--wr-accent-ink);font-weight:700;font-size:14px;text-decoration:none}
   .open:hover{opacity:.88}
   .open:focus-visible,.thumb:focus-visible,.icon:focus-visible,.btn:focus-visible{outline:2px solid var(--wr-accent);outline-offset:2px}
+  .divider{margin:48px 0 24px;border:0;border-top:1px solid var(--wr-line)}
+  .sec-title{margin:0 0 8px;font-size:20px;letter-spacing:-.4px}
+  .sec-note{margin:0 0 16px;color:var(--wr-sub);font-size:14px;line-height:1.6}
   #load-error{color:var(--wr-danger);font-size:14px}
 
   input,textarea{font:inherit;font-size:14px;color:var(--wr-ink);padding:10px 12px;border:1px solid var(--wr-line);border-radius:var(--wr-radius);background:var(--wr-surface);min-width:0;width:100%}
@@ -63,6 +66,12 @@
     <button type="button" class="btn" id="add-open">＋ 새 툴 추가</button>
   </div>
   <ul class="tools" id="tools"></ul>
+  <section id="archive-sec" hidden>
+    <hr class="divider">
+    <h2 class="sec-title">보관용</h2>
+    <p class="sec-note">강습 달력은 지금 짐매니저와 연동해 쓰고 있습니다. 아래 툴은 필요할 때 수동으로 만들 수 있도록 보관해 둔 것입니다.</p>
+    <ul class="tools" id="archive"></ul>
+  </section>
   <p id="load-error" hidden>목록을 불러오지 못했어요. 새로고침해 주세요.</p>
 </main>
 
@@ -91,6 +100,7 @@
   const PENCIL = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
   const TAGS = ['세터', '매니저', '스태프', '디자이너'];
   const list = document.getElementById('tools');
+  const archive = document.getElementById('archive');
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const tagList = tags => (tags || []).map(x => `<span class="tag">${esc(x)}</span>`).join('');
   const tagPicker = (selected = []) => TAGS.map(x =>
@@ -106,7 +116,7 @@
     .then(r => r.json())
     .then(data => {
       tools = data;
-      list.innerHTML = tools.map((t, i) => `
+      const card = (t, i) => `
         <li class="tool" data-i="${i}">
           <div class="head">
             <h2>${esc(t.name)}</h2>
@@ -118,12 +128,16 @@
             <p class="desc">${esc(t.description)}</p>
             <a class="open" href="${esc(t.url)}">열기<span aria-hidden="true">→</span></a>
           </div>
-        </li>`).join('');
+        </li>`;
+      const draw = archived => tools.map((t, i) => !!t.archived === archived ? card(t, i) : '').join('');
+      list.innerHTML = draw(false);
+      archive.innerHTML = draw(true);
+      document.getElementById('archive-sec').hidden = !archive.innerHTML;
     })
     .catch(() => { document.getElementById('load-error').hidden = false; });
 
   // 설명 수정: 고친 tools.json 전체를 복사하고 GitHub 수정 화면을 엽니다.
-  list.addEventListener('click', async e => {
+  const onCardClick = async e => {
     const btn = e.target.closest('[data-act]');
     if (!btn) return;
     const card = btn.closest('.tool');
@@ -179,7 +193,8 @@
       const fallback = body.querySelector('.note textarea');
       if (fallback) { fallback.value = json; fallback.select(); }
     }
-  });
+  };
+  [list, archive].forEach(el => el.addEventListener('click', onCardClick));
 
   const f = id => document.getElementById(id);
   const dialog = f('add');
