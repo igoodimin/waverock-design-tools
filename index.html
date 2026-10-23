@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="ui.css">
 <style>
   *{box-sizing:border-box}
+  [hidden]{display:none!important}
   body{margin:0;background:var(--wr-bg);color:var(--wr-ink);font-family:var(--wr-font)}
   .wrap{max-width:1040px;margin:0 auto;padding:40px 16px 64px}
   .top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 24px}
@@ -22,6 +23,12 @@
   .thumb img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
   .body{display:flex;flex-direction:column;gap:12px;flex:1;padding:16px}
   .body p{margin:0;color:var(--wr-sub);font-size:14px;line-height:1.6}
+  .tags{display:flex;flex-wrap:wrap;gap:6px}
+  .tag{padding:4px 10px;border:1px solid var(--wr-line);border-radius:999px;background:var(--wr-soft);color:var(--wr-ink);font:600 12px/1.4 var(--wr-font)}
+  button.tag{cursor:pointer;background:var(--wr-surface);color:var(--wr-sub)}
+  button.tag:hover{background:var(--wr-soft)}
+  button.tag[aria-pressed="true"]{background:var(--wr-accent);border-color:var(--wr-accent);color:var(--wr-accent-ink)}
+  button.tag:focus-visible{outline:2px solid var(--wr-accent);outline-offset:2px}
   .edit{display:grid;gap:8px}
   .edit-actions{display:flex;gap:8px}
   .note{color:var(--wr-ink)!important;background:var(--wr-soft);padding:10px 12px;border-radius:var(--wr-radius)}
@@ -43,7 +50,7 @@
   .add-head{display:flex;align-items:center;justify-content:space-between;padding:14px 12px 14px 20px;border-bottom:1px solid var(--wr-line);background:var(--wr-surface)}
   .add-head h2{margin:0;font-size:17px}
   .add-body{display:grid;gap:14px;padding:20px}
-  .add label{display:grid;gap:6px;font-size:13px;color:var(--wr-sub)}
+  .add label,.add .label{display:grid;gap:6px;font-size:13px;color:var(--wr-sub)}
   .add ol{margin:0;padding-left:20px;font-size:14px;line-height:1.8}
   .add pre{margin:0;padding:12px;border-radius:var(--wr-radius);background:var(--wr-surface);border:1px solid var(--wr-line);font-size:12px;white-space:pre-wrap;word-break:break-all}
   @media(max-width:600px){.wrap{padding:28px 16px 48px}.top{margin-bottom:18px}h1{font-size:22px}.tools{grid-template-columns:1fr}}
@@ -66,6 +73,7 @@
   </div>
   <div class="add-body">
     <label>툴 이름<input id="f-name" placeholder="예: 이벤트 포스터"></label>
+    <div class="label">담당자<div class="tags" id="f-tags"></div></div>
     <label>설명<textarea id="f-desc" rows="2" placeholder="한 줄로 무엇을 만드는 툴인지 적어 주세요."></textarea></label>
     <label>주소(URL)<input id="f-url" type="url" placeholder="https://igoodimin.github.io/..."></label>
     <label>썸네일 파일 이름<input id="f-thumb" placeholder="예: event-poster.jpg (가로 16:10 권장)"></label>
@@ -81,8 +89,17 @@
 <script>
   const EDIT_URL = 'https://github.com/igoodimin/waverock-design-tools/edit/main/tools.json';
   const PENCIL = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+  const TAGS = ['세터', '매니저', '스태프', '디자이너'];
   const list = document.getElementById('tools');
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const tagList = tags => (tags || []).map(x => `<span class="tag">${esc(x)}</span>`).join('');
+  const tagPicker = (selected = []) => TAGS.map(x =>
+    `<button type="button" class="tag" data-tag="${esc(x)}" aria-pressed="${selected.includes(x)}">${esc(x)}</button>`).join('');
+  const pickedTags = box => [...box.querySelectorAll('[aria-pressed="true"]')].map(b => b.dataset.tag);
+  document.addEventListener('click', e => {
+    const b = e.target.closest('button[data-tag]');
+    if (b) b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true');
+  });
   let tools = [];
 
   fetch('tools.json', {cache: 'no-cache'})
@@ -97,6 +114,7 @@
           </div>
           <a class="thumb" href="${esc(t.url)}" tabindex="-1" aria-hidden="true">${t.thumbnail ? `<img src="${esc(t.thumbnail)}" alt="" loading="lazy" onerror="this.remove()">` : ''}</a>
           <div class="body">
+            <div class="tags shown"${t.tags?.length ? '' : ' hidden'}>${tagList(t.tags)}</div>
             <p class="desc">${esc(t.description)}</p>
             <a class="open" href="${esc(t.url)}">열기<span aria-hidden="true">→</span></a>
           </div>
@@ -118,8 +136,10 @@
       body.querySelector('.note')?.remove();
       const desc = body.querySelector('.desc');
       desc.hidden = true;
+      body.querySelector('.shown').hidden = true;
       desc.insertAdjacentHTML('afterend', `
         <div class="edit">
+          <div class="tags" role="group" aria-label="담당자">${tagPicker(t.tags)}</div>
           <textarea rows="3" aria-label="설명">${esc(t.description)}</textarea>
           <div class="edit-actions">
             <button type="button" class="btn primary" data-act="save">저장</button>
@@ -134,14 +154,19 @@
 
     const edit = body.querySelector('.edit');
     const desc = body.querySelector('.desc');
+    const shown = body.querySelector('.shown');
     if (act === 'cancel') {
       edit.remove();
       desc.hidden = false;
+      shown.hidden = !t.tags?.length;
       return;
     }
     if (act === 'save') {
       t.description = edit.querySelector('textarea').value.trim();
+      t.tags = pickedTags(edit);
       desc.textContent = t.description;
+      shown.innerHTML = tagList(t.tags);
+      shown.hidden = !t.tags.length;
       edit.remove();
       desc.hidden = false;
       const json = JSON.stringify(tools, null, 2) + '\n';
@@ -163,10 +188,13 @@
   dialog.addEventListener('click', e => { if (e.target === dialog) dialog.close(); });
 
   const out = f('f-out');
+  f('f-tags').innerHTML = tagPicker();
+  f('f-tags').addEventListener('click', () => setTimeout(render));
   function render() {
     const thumb = f('f-thumb').value.trim();
     out.textContent = JSON.stringify({
       name: f('f-name').value.trim(),
+      tags: pickedTags(f('f-tags')),
       description: f('f-desc').value.trim(),
       url: f('f-url').value.trim(),
       thumbnail: thumb ? `thumbs/${thumb}` : ''
