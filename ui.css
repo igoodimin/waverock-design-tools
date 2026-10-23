@@ -14,8 +14,17 @@
   --wr-danger:#b42318;
   --wr-danger-soft:#fbecea;
   --wr-radius:8px;
+  --wr-sidebar-w:280px;      /* 왼쪽 설정 영역 폭 */
+  --wr-sidebar-w-mid:240px;  /* 761~1100px 화면 */
+  --wr-control-h:44px;       /* 입력칸·버튼 높이 */
   --wr-font:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;
 }
+
+/* 공통 머리말 (세팅 달력 머리말 기준) */
+.wr-header{display:flex;align-items:center;gap:20px;min-height:78px;padding:16px 38px;background:var(--wr-surface);border-bottom:1px solid var(--wr-line);color:var(--wr-ink);font-family:var(--wr-font)}
+.wr-header h1{margin:0;font-size:30px;font-weight:700;letter-spacing:-1px;line-height:1.2;white-space:nowrap}
+@media(max-width:760px){.wr-header{gap:12px;padding:16px 20px;flex-wrap:wrap}.wr-header h1{font-size:28px}}
+@media print{.wr-header{display:none!important}}
 
 /* 모든 도구 맨 위의 '도구 모음으로' 링크 */
 .wr-home{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--wr-line);border-radius:999px;background:var(--wr-surface);color:var(--wr-ink);font:600 12px/1.4 var(--wr-font);text-decoration:none;white-space:nowrap}
