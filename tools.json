@@ -37,5 +37,15 @@
     "url": "https://igoodimin.github.io/waverock-class-calendar/",
     "thumbnail": "thumbs/class-calendar.jpg",
     "archived": true
+  },
+  {
+    "name": "이벤트 추첨 돌림판",
+    "tags": [
+      "디자이너"
+    ],
+    "description": "인스타 아이디를 넣고 돌림판으로 당첨자를 뽑아 영상으로 저장합니다.",
+    "url": "https://igoodimin.github.io/waverock-event-roulette/",
+    "thumbnail": "thumbs/event-roulette.jpg",
+    "archived": true
   }
 ]
